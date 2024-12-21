@@ -1,23 +1,22 @@
 import request from "supertest";
 import app from "../index.js";
-import mongoose from "mongoose";
 
 const e2eTestCase = async () => {
   try {
     let A1Token, A2Token, P1Token, P1Id, appointmentId;
 
     const registerA1 = await request(app).post("/api/users/register").send({
-      name: "A1Test",
-      email: "a1test@example.com",
-      password: "PasswordA1",
+      name: "A1",
+      email: "a1@example.com",
+      password: "A1",
       role: "student",
     });
     if (!registerA1.ok) {
       throw new Error(`Step 1 Registeration Failed - ${registerA1.body.error}`);
     }
     const loginA1 = await request(app).post("/api/users/login").send({
-      email: "a1test@example.com",
-      password: "PasswordA1",
+      email: "a1@example.com",
+      password: "A1",
     });
     if (!loginA1.body.token) {
       throw new Error(`Step 1 login failed ${loginA1.body.error}`);
@@ -26,17 +25,17 @@ const e2eTestCase = async () => {
     console.log("Step 1 Complete --> A1 Register and Login Successful");
 
     const registerP1 = await request(app).post("/api/users/register").send({
-      name: "P1Test",
-      email: "p1test@example.com",
-      password: "PasswordP1",
+      name: "P1",
+      email: "p1@example.com",
+      password: "P1",
       role: "professor",
     });
     if (!registerP1.ok) {
       throw new Error(`Step 2 Registeration Failed- ${registerP1.body.error}`);
     }
     const loginP1 = await request(app).post("/api/users/login").send({
-      email: "p1test@example.com",
-      password: "PasswordP1",
+      email: "p1@example.com",
+      password: "P1",
     });
     if (!loginP1.body.token || !loginP1.body.user?._id) {
       throw new Error(`Step 2 Login Failed- ${loginP1.body.error}`);
@@ -90,17 +89,17 @@ const e2eTestCase = async () => {
     console.log("Step 5 Complete --> A1 books appointment with P1.");
 
     const registerA2 = await request(app).post("/api/users/register").send({
-      name: "A2Test",
-      email: "a2test@example.com",
-      password: "PasswordA2",
+      name: "A2",
+      email: "a2@example.com",
+      password: "A2",
       role: "student",
     });
     if (!registerA2.ok) {
       throw new Error(`Step 6 Registeration Failed- ${registerA2.body.error}`);
     }
     const loginA2 = await request(app).post("/api/users/login").send({
-      email: "a2test@example.com",
-      password: "PasswordA2",
+      email: "a2@example.com",
+      password: "A2",
     });
     if (!loginA2.body.token) {
       throw new Error(`Step 6 Login Failed- ${loginA2.body.error}`);
@@ -142,18 +141,6 @@ const e2eTestCase = async () => {
     console.log("E2E Test Completed Successfully!");
   } catch (error) {
     console.error("E2E Test Failed:", error.message);
-  } finally {
-    try {
-      console.log("Cleaning up test data...");
-      await mongoose.connection.db.collection("users").deleteMany({});
-      await mongoose.connection.db.collection("availabilities").deleteMany({});
-      await mongoose.connection.db.collection("appointments").deleteMany({});
-      console.log("Test data cleaned up.");
-    } catch (cleErr) {
-      console.error("Error during cleanup:", cleErr.message);
-    }
-    await mongoose.disconnect();
-    console.log("Disconnected from MongoDB.");
   }
 };
 
